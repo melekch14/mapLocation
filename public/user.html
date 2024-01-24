@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Second Leaflet Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        html, body, #map {
+            height: 100%;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+<div id="map"></div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+<script>
+    var map = L.map('map');
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Connect to the WebSocket server
+    var socket = io.connect('http://localhost:3000');
+
+    // Use fixed location values
+    var fixedLat = 34.762569;
+    var fixedLon = 10.691747;
+
+    // Set the map view to the fixed location
+    map.setView([fixedLat, fixedLon], 13);
+
+    // Add an initial marker for the fixed location
+    var fixedLocationMarker = L.marker([fixedLat, fixedLon]).addTo(map)
+        .bindPopup('User A').openPopup();
+
+    // Initialize the received location marker
+    var receivedLocationMarker;
+
+    // Listen for real-time location updates from the server
+    socket.on('locationUpdate', function(data) {
+        console.log('Received location update:', data);
+
+        // Check if the received location marker is already created
+        if (receivedLocationMarker) {
+            // Update the position of the existing marker
+            receivedLocationMarker.setLatLng([data.lat, data.lon]);
+        } else {
+            // Create a new marker for the received location
+            receivedLocationMarker = L.marker([data.lat, data.lon]).addTo(map)
+                .bindPopup('Received Location').openPopup();
+        }
+    });
+</script>
+
+</body>
+</html>

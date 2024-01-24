@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driver</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
+    <style>
+        html, body, #map {
+            height: 100%;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+<div id="map"></div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+<script>
+    var map = L.map('map');
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Connect to the WebSocket server
+    var socket = io.connect('http://localhost:3000');
+
+    // Initialize markers for current location and fixed location
+    var currentLocationMarker;
+    var fixedLocationMarker;
+
+    // Initialize the routing control
+    var routingControl;
+
+    // Function to send location to the server
+    function sendLocationToServer(lat, lon) {
+        // Make an HTTP POST request to your Node.js server
+        fetch('http://localhost:3000/location', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ lat, lon }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Server response:', data);
+        })
+        .catch(error => {
+            console.error('Error sending location to server:', error);
+        });
+    }
+
+    // Watch for changes in the device's position
+    var watchId = navigator.geolocation.watchPosition(
+        function(position) {
+            var lat = position.coords.latitude;
+            var lon = position.coords.longitude;
+
+            // Update the map view
+            map.setView([lat, lon], 13);
+
+            // Remove existing markers and routing control if they exist
+            if (currentLocationMarker) {
+                map.removeLayer(currentLocationMarker);
+            }
+            if (fixedLocationMarker) {
+                map.removeLayer(fixedLocationMarker);
+            }
+            if (routingControl) {
+                map.removeControl(routingControl);
+            }
+
+            // Add a marker to the map at the current position
+            currentLocationMarker = L.marker([lat, lon]).addTo(map)
+                .bindPopup('Your current location').openPopup();
+
+            // Add a marker for the fixed location ("User A")
+            var fixedLat = 34.762569;
+            var fixedLon = 10.691747;
+            fixedLocationMarker = L.marker([fixedLat, fixedLon]).addTo(map)
+                .bindPopup('User A').openPopup();
+
+            // Draw the direction from the current location to "User A"
+            routingControl = L.Routing.control({
+                waypoints: [
+                    L.latLng(lat, lon),
+                    L.latLng(fixedLat, fixedLon)
+                ],
+                routeWhileDragging: true
+            }).addTo(map);
+
+            // Send current location to the server
+            sendLocationToServer(lat, lon);
+        },
+        function(error) {
+            console.error('Error getting current position:', error);
+        }
+    );
+</script>
+
+</body>
+</html>
