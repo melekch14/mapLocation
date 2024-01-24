@@ -28,7 +28,7 @@
     }).addTo(map);
 
     // Connect to the WebSocket server
-    const socket = io.connect('http://51.255.51.213:3000', {
+    const socket = io.connect('https://51.255.51.213:3000', {
     transports: ['websocket'],
     cors: {
         origin: '*',
@@ -47,7 +47,7 @@
     // Function to send location to the server
     function sendLocationToServer(lat, lon) {
         // Make an HTTP POST request to your Node.js server
-        fetch('http://51.255.51.213:3000/location', {
+        fetch('https://51.255.51.213:3000/location', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

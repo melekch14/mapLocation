@@ -22,6 +22,9 @@ const io = new socketIO.Server(server, {
         origin: '*',
         methods: ['GET', 'POST'],
     },
+    // Add the following line to explicitly enable WSS
+    allowEIO3: true,
+    transports: ['websocket'],
 });
 
 const port = 3000;
