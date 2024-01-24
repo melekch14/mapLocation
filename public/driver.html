@@ -28,7 +28,14 @@
     }).addTo(map);
 
     // Connect to the WebSocket server
-    var socket = io.connect('http://51.255.51.213:3000');
+    const socket = io.connect('http://51.255.51.213:3000', {
+    transports: ['websocket'],
+    cors: {
+        origin: '*',
+        methods: ['GET', 'POST'],
+    },
+});
+
 
     // Initialize markers for current location and fixed location
     var currentLocationMarker;

@@ -26,7 +26,14 @@
     }).addTo(map);
 
     // Connect to the WebSocket server
-    var socket = io.connect('http://51.255.51.213:3000');
+    const socket = io.connect('http://51.255.51.213:3000', {
+    transports: ['websocket'],
+    cors: {
+        origin: '*',
+        methods: ['GET', 'POST'],
+    },
+});
+
 
     // Use fixed location values
     var fixedLat = 34.762569;
