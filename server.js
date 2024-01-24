@@ -7,10 +7,13 @@ const path = require('path');
 const fs = require('fs');
 
 const app = express();
-
+const currentFolder = process.cwd();
+const keypath = path.join(currentFolder, "key.pem");
+const certpath = path.join(currentFolder, "cert.pem");
 const options = {
-    key: fs.readFileSync('key.pem'),
-    cert: fs.readFileSync('cert.pem')
+    key: fs.readFileSync(keypath),
+    cert: fs.readFileSync(certpath),
+    passphrase: '1234'
   };
 
   const server = https.createServer(options, app);
@@ -60,5 +63,5 @@ io.on('connection', (socket) => {
 });
 
 server.listen(port, () => {
-    console.log(`Server is running on http://51.255.51.213:${port}`);
+    console.log(`Server is running on https://localhost:${port}`);
 });
