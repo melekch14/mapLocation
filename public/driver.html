@@ -28,7 +28,7 @@
     }).addTo(map);
 
     // Connect to the WebSocket server
-    var socket = io.connect('http://localhost:3000');
+    var socket = io.connect('http://51.255.51.213:3000');
 
     // Initialize markers for current location and fixed location
     var currentLocationMarker;
@@ -40,7 +40,7 @@
     // Function to send location to the server
     function sendLocationToServer(lat, lon) {
         // Make an HTTP POST request to your Node.js server
-        fetch('http://localhost:3000/location', {
+        fetch('http://51.255.51.213:3000/location', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
