@@ -37,7 +37,7 @@ app.use(express.static('public'));
 
 // Serve index.html
 app.get('/driver', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'driver.html'));
+    res.sendFile(path.join(__dirname, 'public', 'index2.html'));
 });
 
 // Serve second.html
