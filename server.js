@@ -42,7 +42,7 @@ app.get('/driver', (req, res) => {
 
 // Serve second.html
 app.get('/user', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'user.html'));
+    res.sendFile(path.join(__dirname, 'public', 'test.html'));
 });
 
 // Handling HTTP POST request for location updates
